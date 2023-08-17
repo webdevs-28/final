@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Blog home{% endblock title %}
+{% block blogactive %}active{% endblock blogactive %}
+{% block body %}
+<div class="container my-3">
+    <h2>Search results :
+    </h2>
+    {% if allposts|length < 1 %} <p>
+        Your search - <b>{{query}}</b> - did not match any documents.
+        Suggestions:
+        <ul>
+            <li>Make sure that all words are spelled correctly.</li>
+            <li>Try different keywords.</li>
+            <li>Try more general keywords.</li>
+            <li>Try fewer keywords.</li>
+        </ul>
+
+        </p>
+        {% endif %}
+
+        {% for post in allposts %}
+        <div class="card my-4">
+            <h2 class="card-header"></h2>
+            <div class="card-body">
+                <h3 class="card-title">{{post.title}}</h3> <small>at {{post.timestamp}}</small>
+                <p class="card-text">{{post.content|truncatechars:500}}</p>
+                <a href="/blog/{{post.slug}}" role="button" class="btn btn-primary">Continue reading</a>
+            </div>
+        </div>
+        {% endfor %}
+</div>
+{% endblock body %}

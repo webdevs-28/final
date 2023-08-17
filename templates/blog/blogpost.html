@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %} Blogpost{% endblock title %}
+
+{% block body %}
+{% load static %}
+<div class="container my-3">
+  <div class="blog-post">
+    <h2 class="blog-post-title">{{post.title}}</h2>
+    <p class="blog-post-meta">{{post.timeStamp}} by <a href="#">{{post.author}}</a></p>
+
+    <p>{{post.content}}</p>
+    <hr>
+  </div>
+  <h3>Comments({{comments.count}})</h3>
+
+  {% if user.is_authenticated %}
+  <form action="/blog/postcomment" method="post">
+    {% csrf_token %}
+    <div class="col-auto">
+      <input type="text" class="form-control" name="comment" id="comment" placeholder="Enter comment here">
+    </div>
+    <input type="hidden" name="postsno" value="{{post.sno}}">
+    <div class="col-auto">
+      <button type="submit" value="submit" class="btn btn-primary mb-3">Post</button>
+    </div>
+  </form>
+  {% else %}
+  <a href="/login"><button class="btn btn-secondary" role="button">Login here</button></a>
+  {% endif %}
+  {% for comment in comments %}
+  <div class="row my-3">
+    <div class="col-md-1  ">
+      <img class="rounded mx-auto d-block w-100 p-2" src="{% static '/uzr.jpg' %}">
+
+    </div>
+    <div class="col-md-11 ">
+      <b> {{comment.user.username }} </b> &#8226; {{ comment.timestamp}}
+      <div> {{comment.comment}} </div>
+    </div>
+    <div class="reply mx-0">
+      <button class="btn btn-sm btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#replybox{{comment.sno}}"
+        aria-expanded="false" aria-controls="replybox{{comment.sno}}">
+        reply
+      </button>
+      </p>
+      <div class="collapse" id="replybox{{comment.sno}}">
+        <form action="/blog/postcomment" method="post">
+          {% csrf_token %}
+          <div class="form-group">
+              <label for="comment">Post a reply </label>
+              <input type="text" class="form-control" name="comment" placeholder="Enter comment here">
+              <input type="hidden" name="parentsno" value="{{comment.sno}}">
+          </div>
+          <input type="hidden" name="postsno" value="{{post.sno}}">
+          <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+      </div>
+    </div>
+    <hr>
+    {% endfor %}
+  </div>
+
+
+  {% endblock %}
